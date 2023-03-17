@@ -1,0 +1,23 @@
+flaskApi:
+  dockerSecretName: regcred
+  image: rg.fr-par.scw.cloud/tp-s10/flask-api
+  tag: 0.0.1
+  replicas: 1
+  service:
+    type: ClusterIP
+  ingress:
+    enable: true
+    host: flask-api.tp-s10.og-ingest1.com
+  env:
+    - name: ENV_VAR1
+      value: value_env_var_1
+    - name: ENV_VAR2
+      value: value_env_var_2
+  main_pyOverride:
+    enable: true
+    returnText:
+      - "bonjour "
+      - "tout le monde "
+      - "comment "
+      - "ca "
+      - "va ?"

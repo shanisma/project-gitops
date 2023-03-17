@@ -1,0 +1,6 @@
+flaskApi:
+  service:
+    type: LoadBalancer
+  ingress:
+    enable: true
+    host: flask-api-2.tp-s10.og-ingest1.com

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-flask-api
+  labels:
+    app: {{ .Release.Name }}-flask-api
+spec:
+  replicas: {{ .Values.flaskApi.replicas }}
+  template:
+    metadata:
+      name:  {{ .Release.Name }}-flask-api
+      annotations:
+        checksum/cm: {{ include (print $.Template.BasePath "/cm.yaml") . | sha256sum }}
+      labels:
+        app:  {{ .Release.Name }}-flask-api
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.flaskApi.dockerSecretName }}
+      containers:
+        - name:  {{ .Release.Name }}-flask-api
+          image: {{ .Values.flaskApi.image }}:{{.Values.flaskApi.tag }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5050
+              name: service
+          env:
+            {{- toYaml .Values.flaskApi.env | nindent 12 }}
+
+          volumeMounts:
+            {{- if .Values.flaskApi.main_pyOverride }}
+            - mountPath: /app
+              name: script
+            {{- end }}
+      restartPolicy: Always
+      volumes:
+        {{- if .Values.flaskApi.main_pyOverride }}
+        - name: script
+          configMap:
+            name: {{ .Release.Name }}-flask-api
+        {{- end }}
+  selector:
+    matchLabels:
+      app:  {{ .Release.Name }}-flask-api

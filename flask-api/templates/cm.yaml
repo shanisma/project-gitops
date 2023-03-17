@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-flask-api
+data:
+  VAR: "env_ars"
+  main.py: |-
+    from flask import Flask
+    import os
+    app = Flask(__name__)
+
+
+    @app.route("/")
+    def hello_world():
+        return """
+            {{ range .Values.flaskApi.main_pyOverride.returnText }}
+            {{ . | upper }} <br>
+            {{ end }}
+        """

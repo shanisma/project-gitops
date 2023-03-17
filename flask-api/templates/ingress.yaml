@@ -1,0 +1,26 @@
+{{ if .Values.flaskApi.ingress.enable }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-flask-api
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ .Values.flaskApi.ingress.host }}
+      http:
+        paths:
+          - path: /
+            # https://kubernetes.io/docs/concepts/services-networking/ingress/
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-flask-api
+                port:
+                  number: 5050
+  tls:
+    - hosts:
+        -  {{ .Values.flaskApi.ingress.host }}
+      secretName: {{ .Values.flaskApi.ingress.host }}-tls
+  {{ end }}
