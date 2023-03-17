@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 10
+replicaCount: 2
 
 image:
   repository: nginx
@@ -41,21 +41,20 @@ service:
   port: 80
 
 ingress:
-  enabled: false
+  enabled: true
   className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
   hosts:
-    - host: chart-example.local
+    - host: values-dev.tp-s10.og-ingest1.com
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
-
+  tls:
+    - secretName: values-dev.tp-s10.og-ingest1.com-tls
+      hosts:
+        - values-dev.tp-s10.og-ingest1.com
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
